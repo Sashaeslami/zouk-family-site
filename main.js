@@ -389,6 +389,16 @@
     else start();
   }
 
+  /* ---------- 9d. passes left in the current tier (the numbers live on .tiers in the HTML) ---------- */
+  const tiersEl = $('.tiers[data-left]');
+  if (tiersEl) {
+    const total = +tiersEl.dataset.total, left = Math.max(0, Math.min(total, +tiersEl.dataset.left));
+    $$('[data-left]').forEach(n => { if (n !== tiersEl) n.textContent = left; });
+    $$('[data-total]').forEach(n => { if (n !== tiersEl) n.textContent = total; });
+    const dots = $('.passes__dots');
+    if (dots) dots.innerHTML = Array.from({ length: total }, (_, i) => `<i style="--i:${i}"${i >= total - left ? ' class="free"' : ''}></i>`).join('');
+  }
+
   /* ---------- 10. mobile menu ---------- */
   const burger = $('.nav__burger'), menu = $('#mobileMenu');
   const setMenu = open => {

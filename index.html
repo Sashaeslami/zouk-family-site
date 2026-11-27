@@ -677,16 +677,29 @@
     <h2 class="h2 reveal">The earlier you join, <em>the less you pay.</em></h2>
     <p class="lead reveal">Here's the pricing for 2-people rooms, per person. Only a $250 deposit is needed to apply (100% refunded if you're not accepted). The rest is due within 48 hours of your approval.</p>
 
-    <div class="tiers reveal" role="table" aria-label="Pricing tiers">
+    <div class="tiers reveal" role="table" aria-label="Pricing tiers" data-tier="7" data-total="20" data-left="4">
       <div class="tier tier--sold" style="--h:44" role="row"><span class="tier__bar"></span><b>$600</b><small>Tier 1</small><i>Sold out</i></div>
       <div class="tier tier--sold" style="--h:52" role="row"><span class="tier__bar"></span><b>$625</b><small>Tier 2</small><i>Sold out</i></div>
       <div class="tier tier--sold" style="--h:60" role="row"><span class="tier__bar"></span><b>$650</b><small>Tier 3</small><i>Sold out</i></div>
       <div class="tier tier--sold" style="--h:68" role="row"><span class="tier__bar"></span><b>$675</b><small>Tier 4</small><i>Sold out</i></div>
       <div class="tier tier--sold" style="--h:76" role="row"><span class="tier__bar"></span><b>$700</b><small>Tier 5</small><i>Sold out</i></div>
       <div class="tier tier--sold" style="--h:84" role="row"><span class="tier__bar"></span><b>$725</b><small>Tier 6</small><i>Sold out</i></div>
-      <div class="tier tier--now" style="--h:92" role="row"><span class="tier__bar"></span><b>$750</b><small>Tier 7</small><i>20 passes</i></div>
-      <div class="tier" style="--h:100" role="row"><span class="tier__bar"></span><b>$775</b><small>Tier 8</small><i>20 passes</i></div>
+      <div class="tier tier--now" style="--h:92" role="row"><span class="tier__bar"></span><b>$750</b><small>Tier 7</small><i><span data-left>4</span> left</i></div>
+      <div class="tier tier--next" style="--h:100" role="row"><span class="tier__bar"></span><b>$775</b><small>Tier 8</small><i>next · 20 passes</i></div>
     </div>
+    <article class="passes reveal" aria-label="Passes left in the current tier">
+      <div class="passes__now">
+        <p class="hand">Right now: Tier 7</p>
+        <h3>Only <b data-left>4</b> of <span data-total>20</span> passes left at <em>$750</em></h3>
+        <p class="passes__dots" aria-hidden="true"></p>
+      </div>
+      <div class="passes__next">
+        <p class="hand">Then: Tier 8</p>
+        <h3>$775 <small>· all 20 passes still open</small></h3>
+        <p>When the last Tier 7 pass goes, the price moves up by $25.</p>
+        <a class="btn btn--primary btn--sm" href="https://www.apply.zouk.family" target="_blank" rel="noopener" data-burst>Grab a Tier 7 pass <svg class="ic"><use href="#ic-arrow"/></svg></a>
+      </div>
+    </article>
     <p class="tiers__legend reveal">Every tier = <b>$500</b> accommodation, food &amp; venue logistics (mandatory) + the <b>pass</b> ($100 at Tier 1, up to $275 at Tier 8).</p>
 
     <div class="tables">
