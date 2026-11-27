@@ -677,18 +677,19 @@ dialog[open] { animation: pop .5s var(--spring); }
 .gauge h3 { font-weight: 800; font-size: 1.04rem; line-height: 1.25; margin-top: 14px; }
 .gauge p { color: var(--muted); font-size: .86rem; line-height: 1.35; margin-top: 6px; }
 .shift { display: grid; grid-template-columns: 1fr 1.2fr; gap: clamp(20px, 4vw, 60px); align-items: center; margin-top: 18px; padding: clamp(24px, 3.4vw, 44px); border-radius: 34px; background: linear-gradient(135deg, #2fc674, #0e8f4c); color: #fff; box-shadow: 0 24px 50px -24px rgba(14, 143, 76, .85); }
-.shift .hand { color: var(--lime); font-size: 1.7rem; }
-.shift h3 { font-family: var(--serif); font-weight: 600; font-size: clamp(1.8rem, 3.4vw, 2.8rem); line-height: 1.05; margin: 4px 0 10px; }
+.shift .hand { color: var(--lime); font-size: clamp(1.7rem, 2.6vw, 2.3rem); font-weight: 700; margin: 6px 0 12px; }
+.shift h3 { font-family: var(--serif); font-weight: 600; font-variation-settings: "SOFT" 80; font-size: clamp(2.2rem, 4.6vw, 3.7rem); line-height: 1; letter-spacing: -.02em; text-wrap: balance; }
 .shift p:not(.hand) { color: rgba(255, 255, 255, .92); }
 .shift__bars { display: grid; gap: 16px; }
-.shift__bar span { display: block; font-weight: 800; font-size: .92rem; margin-bottom: 6px; }
+.shift__bar span { display: block; font-weight: 800; font-size: 1.02rem; margin-bottom: 7px; }
 .shift__bar i { position: relative; display: block; height: 48px; border-radius: 999px; background: rgba(255, 255, 255, .18); overflow: hidden; font-style: normal; }
 .shift__bar i::before { content: ""; position: absolute; inset: 0 auto 0 0; width: var(--w); border-radius: 999px; background: rgba(255, 255, 255, .6); transform-origin: left; }
 .shift__bar--got i::before { background: linear-gradient(90deg, var(--sun), var(--lime)); }
 .js .shift .shift__bar i::before { transform: scaleX(0); transition: transform 1.6s var(--ease) .3s; }
 .js .shift .shift__bar--got i::before { transition-delay: .8s; }
 .js .shift.in .shift__bar i::before { transform: scaleX(1); }
-.shift__bar i b { position: absolute; left: 20px; top: 50%; translate: 0 -50%; font-family: var(--serif); font-size: 1.45rem; color: var(--deep); }
+.shift__bar i b { position: absolute; left: 20px; top: 50%; translate: 0 -50%; font-family: var(--serif); font-size: 1.5rem; color: var(--deep); white-space: nowrap; }
+.shift__bar i b small { font-family: var(--sans); font-size: .6em; font-weight: 800; opacity: .75; }
 
 .wall { display: grid; gap: 26px; margin-top: clamp(40px, 6vw, 70px); padding: 34px 0 30px; overflow: hidden; -webkit-mask: linear-gradient(90deg, transparent, #000 7%, #000 93%, transparent); mask: linear-gradient(90deg, transparent, #000 7%, #000 93%, transparent); }
 .wall__row { display: flex; align-items: flex-start; gap: 24px; width: max-content; animation: wall-slide 80s linear infinite; }
