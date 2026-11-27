@@ -297,9 +297,9 @@
   if ('IntersectionObserver' in window && !reduced) {
     const cio = new IntersectionObserver(entries => entries.forEach(e => {
       if (!e.isIntersecting) return;
-      const el = e.target, to = +el.dataset.count, t0 = performance.now(), dur = 1400;
+      const el = e.target, to = +el.dataset.count, dec = +(el.dataset.dec || 0), t0 = performance.now(), dur = 1500;
       const tick = t => {
-        const k = clamp((t - t0) / dur), v = Math.round(to * (1 - Math.pow(1 - k, 3)));
+        const k = clamp((t - t0) / dur), v = (to * (1 - Math.pow(1 - k, 3))).toFixed(dec);
         el.textContent = v;
         if (k < 1) requestAnimationFrame(tick);
       };
@@ -323,6 +323,70 @@
     const days = Math.floor((new Date('2027-02-17T00:00:00-05:00') - new Date()) / 864e5);
     if (days > 1) cd.textContent = `only ${days} days to go!`;
     else if (days === 1) cd.textContent = 'see you tomorrow!';
+  }
+
+  /* ---------- 9b. love note wall: duplicate each row so it loops forever ---------- */
+  $$('.wall__row').forEach(row => {
+    if (reduced) return;
+    [...row.children].forEach(n => { const c = n.cloneNode(true); c.setAttribute('aria-hidden', 'true'); row.appendChild(c); });
+  });
+
+  /* ---------- 9c. world map: where last year's family flew in from ---------- */
+  const mapEl = $('#map');
+  if (mapEl) {
+    const NS = 'http://www.w3.org/2000/svg';
+    const W = 1000, H = 371, LON0 = -170, LON1 = 180, LAT0 = 78, LAT1 = -52;
+    const X = lon => ((lon - LON0) / (LON1 - LON0)) * W, Y = lat => ((LAT0 - lat) / (LAT0 - LAT1)) * H;
+    const home = [20.63, -87.07]; // Playa del Carmen
+    const cities = [[49.28,-123.12],[47.61,-122.33],[45.52,-122.68],[37.77,-122.42],[34.05,-118.24],[32.72,-117.16],[51.05,-114.07],[53.55,-113.49],[35.69,-105.94],[30.27,-97.74],[32.78,-96.8],[44.98,-93.27],[33.75,-84.39],[25.76,-80.19],[28.54,-81.38],[43.65,-79.38],[45.42,-75.7],[45.5,-73.57],[40.71,-74.01],[42.36,-71.06],[37.54,-77.44],[44.65,-63.57],[19.43,-99.13],[6.25,-75.56],[-23.55,-46.63],[-27.59,-48.55],[64.15,-21.94],[51.51,-0.13],[52.37,4.9],[51.05,3.72],[50.94,6.96],[50.11,8.68],[52.52,13.4],[50.08,14.44],[48.21,16.37],[46.06,14.51],[50.06,19.94],[52.23,21.01],[54.35,18.65],[32.08,34.78],[-8.41,115.19],[-36.85,174.76]];
+    const el = (tag, attrs, parent) => { const n = document.createElementNS(NS, tag); for (const k in attrs) n.setAttribute(k, attrs[k]); parent.appendChild(n); return n; };
+    const draw = () => {
+      const arcs = $('.map__arcs', mapEl), dots = $('.map__dots', mapEl), homeG = $('.map__home', mapEl);
+      const hx = X(home[1]), hy = Y(home[0]);
+      cities.forEach(([lat, lon], i) => {
+        const x = X(lon), y = Y(lat), dist = Math.hypot(x - hx, y - hy);
+        const mx = (x + hx) / 2, my = (y + hy) / 2 - Math.min(120, dist * 0.32 + 8);
+        const p = el('path', { class: 'map__arc', d: `M${x.toFixed(1)} ${y.toFixed(1)}Q${mx.toFixed(1)} ${my.toFixed(1)} ${hx.toFixed(1)} ${hy.toFixed(1)}` }, arcs);
+        const d = (0.25 + i * 0.045).toFixed(2) + 's';
+        p.style.setProperty('--len', Math.ceil(p.getTotalLength()));
+        p.style.setProperty('--d', d);
+        el('circle', { class: 'map__dot', cx: x.toFixed(1), cy: y.toFixed(1), r: 3.6 }, dots).style.setProperty('--d', d);
+      });
+      el('circle', { class: 'map__pulse', cx: hx, cy: hy, r: 9 }, homeG);
+      el('circle', { class: 'map__pulse', cx: hx, cy: hy, r: 9 }, homeG);
+      el('text', { class: 'map__heart', x: hx, y: hy + 7, 'text-anchor': 'middle' }, homeG).textContent = '💚';
+      el('text', { class: 'map__label', x: hx - 14, y: hy + 26, 'text-anchor': 'end' }, homeG).textContent = 'Ozen, Playa del Carmen';
+    };
+    const land = async () => {
+      const topo = await (await fetch('https://cdn.jsdelivr.net/npm/world-atlas@2/land-110m.json')).json();
+      const { scale: [sx, sy], translate: [tx, ty] } = topo.transform;
+      const arcs = topo.arcs.map(a => { let x = 0, y = 0; return a.map(([dx, dy]) => { x += dx; y += dy; return [x * sx + tx, y * sy + ty]; }); });
+      const ring = idx => idx.flatMap((i, k) => { const pts = i >= 0 ? arcs[i] : arcs[~i].slice().reverse(); return k ? pts.slice(1) : pts; });
+      const polys = [];
+      const walk = g => {
+        if (g.type === 'GeometryCollection') g.geometries.forEach(walk);
+        else if (g.type === 'Polygon') polys.push(g.arcs);
+        else if (g.type === 'MultiPolygon') g.arcs.forEach(p => polys.push(p));
+      };
+      Object.values(topo.objects).forEach(walk);
+      let d = '';
+      polys.forEach(poly => poly.forEach(r => {
+        let pts = ring(r);
+        if (Math.max(...pts.map(p => p[1])) < -58) return; // skip Antarctica
+        const lons = pts.map(p => p[0]);
+        if (Math.max(...lons) - Math.min(...lons) > 180) pts = pts.map(([lon, lat]) => [lon < 0 ? lon + 360 : lon, lat]); // rings that straddle the date line
+        d += 'M' + pts.map(([lon, lat]) => X(lon).toFixed(1) + ' ' + Y(lat).toFixed(1)).join('L') + 'Z';
+      }));
+      $('.map__land', mapEl).setAttribute('d', d);
+    };
+    let started = false;
+    const start = () => {
+      if (started) return; started = true;
+      draw();
+      land().then(() => mapEl.classList.add('ready')).catch(() => mapEl.classList.add('failed'));
+    };
+    if ('IntersectionObserver' in window) new IntersectionObserver((es, o) => { if (es[0].isIntersecting) { start(); o.disconnect(); } }, { rootMargin: '900px 0px' }).observe(mapEl);
+    else start();
   }
 
   /* ---------- 10. mobile menu ---------- */
